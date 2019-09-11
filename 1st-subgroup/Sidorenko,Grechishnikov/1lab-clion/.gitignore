@@ -1,0 +1,13 @@
+.idea
+
+# CMake
+cmake-build-*/
+
+# File-based project format
+*.iws
+
+# Cursive Clojure plugin
+.idea/replstate.xml
+
+# Editor-based Rest Client
+.idea/httpRequests
