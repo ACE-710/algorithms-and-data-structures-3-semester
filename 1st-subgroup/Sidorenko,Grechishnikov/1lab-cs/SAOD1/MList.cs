@@ -6,12 +6,19 @@ namespace SAOD1
     {
         private int _size;
         private Node<T> _head;
+        private Iterator<T> _iterator;
 
+        public Iterator<T> GetIterator()
+        {
+            return _iterator;
+        }
+        
         public void Add(T value)
         {
             if (_size == 0)
             {
                 _head = new Node<T>(value);
+                _iterator = new Iterator<T>(_head);
             }
             else
             {
@@ -90,11 +97,12 @@ namespace SAOD1
         {
             var cur = _head;
             Node<T> prev = null;
-            
+
             var pos = 0;
             if (_head.Value.CompareTo(elem) == 0)
             {
                 _head = cur.Next;
+                _iterator.SetHead(_head);
                 _size--;
                 return;
             }
@@ -106,6 +114,7 @@ namespace SAOD1
                     prev = cur;
                     continue;
                 }
+
                 if (pos == _size - 1)
                 {
                     prev.Next = null;
@@ -126,9 +135,11 @@ namespace SAOD1
             if (position == 0)
             {
                 _head = _head.Next;
+                _iterator.SetHead(_head);
                 --_size;
                 return;
             }
+
             for (; n?.Next != null || pos != position - 1; n = n.Next, pos++)
             {
                 if (pos != position - 1) continue;
@@ -145,6 +156,7 @@ namespace SAOD1
         public void Clear()
         {
             _head = null;
+            _iterator = null;
             _size = 0;
         }
 
@@ -159,7 +171,52 @@ namespace SAOD1
         }
     }
 
-    internal class Node<T> where T : IComparable
+    public class Iterator<T> where T : IComparable
+    {
+        private Node<T> _curItem;
+        private Node<T> _head;
+
+        public Iterator(Node<T> value)
+        {
+            _head = value;
+            _curItem = _head;
+        }
+
+        public void SetHead(Node<T> value)
+        {
+            if (_curItem == _head)
+            {
+                _head = value;
+                _curItem = _head;
+            }
+            else
+            {
+                _head = value;
+            }
+        }
+        
+        public void Next()
+        {
+            if (_curItem.Next != null) _curItem = _curItem.Next;
+        }
+
+        public void ToStart()
+        {
+            _curItem = _head;
+        }
+
+        public T Get()
+        {
+            return _curItem.Value;
+        }
+
+        public void Set(T value)
+        {
+            _curItem.Value = value;
+        }
+    }
+
+    public class Node<T> where T : IComparable
     {
         public T Value;
         public Node<T> Next;

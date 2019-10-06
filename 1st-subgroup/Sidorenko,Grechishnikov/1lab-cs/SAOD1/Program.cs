@@ -16,10 +16,13 @@ namespace SAOD1
             list.Add(2);
             list.Add(3);
             list.Add(4);
-//            list.Remove(1);
-//            list.Remove(3);
 
-            for (int i = 0; i < list.GetSize(); i++)
+            list.GetIterator().Next();
+            Console.WriteLine(list.GetIterator().Get());
+
+            list.GetIterator().Set(4546);
+            Console.WriteLine();
+            for (var i = 0; i < list.GetSize(); i++)
                 Console.WriteLine(list.Get(i));
             Console.ReadLine();
         }
