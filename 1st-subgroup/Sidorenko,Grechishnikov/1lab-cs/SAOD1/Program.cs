@@ -16,8 +16,8 @@ namespace SAOD1
             list.Add(2);
             list.Add(3);
             list.Add(4);
-            list.Add(555, 4);
-//
+            list.Add(555, 3);
+            list.RemoveAt(4);
 //            list.Remove(1);
 //            list.Remove(3);
 

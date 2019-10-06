@@ -4,7 +4,7 @@ namespace SAOD1
 {
     public class MList<T> where T : IComparable
     {
-        private int _size = 0;
+        private int _size;
         private Node<T> _head;
 
         public void Add(T value)
@@ -21,6 +21,7 @@ namespace SAOD1
                 n.Next = new Node<T>(value);
                 //n = n.next;
             }
+
             _size++;
         }
 
@@ -110,16 +111,22 @@ namespace SAOD1
             }
         }
 
-        public void RemoveByPos(int position)
+        public void RemoveAt(int position)
         {
             var n = _head;
             var pos = 0;
-            for (; n?.Next != null || pos != position; n = n.Next, pos++)
+            if (position == 0)
             {
-                if (pos != position) continue;
-                if (n != null) n.Next = n?.Next?.Next;
+                _head = _head.Next;
+                --_size;
+                return;
+            }
+            for (; n?.Next != null || pos != position - 1; n = n.Next, pos++)
+            {
+                if (pos != position - 1) continue;
+                if (n != null) n.Next = n.Next?.Next;
                 _size--;
-                break;
+                return;
             }
 
             if (n?.Next == null) return;
