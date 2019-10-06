@@ -88,25 +88,33 @@ namespace SAOD1
 
         public void Remove(T elem)
         {
-            var n = _head;
+            var cur = _head;
+            Node<T> prev = null;
+            
             var pos = 0;
             if (_head.Value.CompareTo(elem) == 0)
             {
-                _head = n.Next;
+                _head = cur.Next;
+                _size--;
                 return;
             }
 
-            for (; n != null; n = n.Next, pos++)
+            for (; cur != null; cur = cur.Next, pos++)
             {
-                if (n.Value.CompareTo(elem) != 0) continue;
-                _size--;
-//                if (pos == _size - 1)
-//                {
-//                    // Заменить n на n.next и вынести head из тела цикла
-//                    return;
-//                }
+                if (cur.Value.CompareTo(elem) != 0)
+                {
+                    prev = cur;
+                    continue;
+                }
+                if (pos == _size - 1)
+                {
+                    prev.Next = null;
+                    _size--;
+                    return;
+                }
 
-                n = n.Next;
+                prev.Next = cur.Next;
+                _size--;
                 break;
             }
         }
