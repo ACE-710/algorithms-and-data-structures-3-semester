@@ -6,17 +6,20 @@ using System.Threading.Tasks;
 
 namespace SAOD1
 {
-    class Program
+    static class Program
     {
         static void Main(string[] args)
         {
-            List<int> list = new List<int>();
-            
+            var list = new MList<int>();
+
             list.Add(1);
             list.Add(2);
             list.Add(3);
             list.Add(4);
-            list.Add(50, 0);
+            list.Add(555, 4);
+//
+//            list.Remove(1);
+//            list.Remove(3);
 
             for (int i = 0; i < list.GetSize(); i++)
                 Console.WriteLine(list.Get(i));
