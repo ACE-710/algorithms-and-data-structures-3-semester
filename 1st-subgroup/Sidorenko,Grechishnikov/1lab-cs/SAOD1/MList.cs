@@ -70,6 +70,15 @@ namespace SAOD1
             return n.Value;
         }
 
+        public void Change(int pos, T value)
+        {
+            if (pos >= _size) throw new SystemException("OutOfBounds");
+
+            var n = _head;
+            for (var i = 0; i != pos; i++) n = n.Next;
+            n.Value = value;
+        }
+
         public bool Contains(T elem)
         {
             var n = _head;
