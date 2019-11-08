@@ -1,0 +1,16 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BstConsole", "BstConsole\BstConsole.csproj", "{CFD63871-4C78-4C44-BDEE-C3D3E8D01410}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CFD63871-4C78-4C44-BDEE-C3D3E8D01410}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CFD63871-4C78-4C44-BDEE-C3D3E8D01410}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CFD63871-4C78-4C44-BDEE-C3D3E8D01410}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CFD63871-4C78-4C44-BDEE-C3D3E8D01410}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
