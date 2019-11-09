@@ -1,4 +1,7 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Numerics;
 
 // ReSharper disable TailRecursiveCall
 
@@ -116,6 +119,9 @@ namespace BstConsole {
                     insert(node.left, key, value);
                 }
             }
+            else if (node.key == key) {
+                node.value = value;
+            }
             else {
                 if (node.right == null) {
                     node.right = new TreeNode<T>(key, value);
@@ -132,27 +138,31 @@ namespace BstConsole {
             Console.WriteLine();
         }
 
-        public void printTree() {
-            var depth = getTreeDepth();
-            Console.WriteLine(depth);
-        }
-
-        public int getWayLength() {
-            throw new NotImplementedException();
-//            var node = head;
-//            var size = 0;
-//            while (true) {
-//                
-//                if (node.left != null)
-//                    
-//                    if (node.right != null)
-//            }
-        }
 
         private static void traverseNode(TreeNode<T> node) {
             if (node.left != null) traverseNode(node.left);
             if (node.right != null) traverseNode(node.right);
             Console.Write(node.key + " ");
+        }
+
+        public void printTree() {
+            BTreePrinter.print(head);
+        }
+
+        public int getWayLength() {
+//            throw new NotImplementedException();
+            var done = new ArrayList();
+            var node = head;
+            var lenght = 0;
+            while (true) {
+                if (node.left != null)
+                    lenght++;
+
+                if (node.right != null)
+                    lenght++;
+            }
+
+            return lenght;
         }
 
         public void clear() {
@@ -190,22 +200,48 @@ namespace BstConsole {
             size--;
         }
 
-        private int getTreeDepth(TreeNode<T> node = null, int depth = 0) {
+        private int getTreeDepth(TreeNode<T> node = null, int depth = 0, Side side = Side.None) {
             if (node == null) {
                 return getTreeDepth(head);
             }
+
             var leftDepth = 0;
             var rightDepth = 0;
 
-            if (node.left != null) leftDepth = getTreeDepth(node.left, depth + 1);
-            if (node.right != null) rightDepth = getTreeDepth(node.right, depth + 1);
+            if (node.right != null) {
+                rightDepth = getTreeDepth(node.right, depth + 1, Side.Right);
+            }
 
-            return leftDepth > rightDepth ? leftDepth : rightDepth;
+            if (node.left != null) {
+                leftDepth = getTreeDepth(node.left, depth + 1, Side.Left);
+            }
+
+
+            if (depth == 1 && side == Side.Right) {
+                for (var i = 0; i < depth; i++) {
+                    Console.Write("    ");
+                }
+
+                Console.WriteLine(node.key);
+                Console.WriteLine(head.key);
+            }
+            else if (node.key != head.key) {
+                for (var i = 0; i < depth; i++) {
+                    Console.Write("    ");
+                }
+
+                Console.WriteLine(node.key);
+            }
+
+            if (node.left != null || node.right != null)
+                return leftDepth > rightDepth ? leftDepth : rightDepth;
+            return depth;
         }
 
         private enum Side {
             Left,
-            Right
+            Right,
+            None
         }
 
         public class BstIterator {
@@ -228,6 +264,8 @@ namespace BstConsole {
                 }
             }
 
+            public bool checkState() => cur != null;
+
             public void placeOnMax() {
                 cur = head ?? throw new Exception("Tree is empty or iterator was not initialized properly");
 
@@ -247,16 +285,121 @@ namespace BstConsole {
             }
 
             public void placeLeft() {
-                if (cur.left == null)
-                    if (parent.left == null || parent.left.key == cur.key) throw new Exception("No more eleme");
+                if (cur.left == null) {
+                    if (parent.left == null || parent.left.key >= cur.key)
+                        throw new Exception("No more elements");
+                    if (parent.key < cur.key) cur = parent;
+                }
+                else cur = cur.left;
             }
-            
+
+            public void placeRight() {
+                if (cur.right == null)
+                    if (parent.right == null || parent.right.key == cur.key)
+                        throw new Exception("No more elements");
+                    else cur = parent;
+                else cur = cur.right;
+            }
+
             public void setValue(T value) {
                 if (cur == null) {
                     throw new Exception("Tree is empty or iterator was not initialized properly");
                 }
 
                 cur.value = value;
+            }
+        }
+
+        private static class BTreePrinter {
+            private class NodeInfo {
+                public TreeNode<T> node;
+                public string text;
+                public int startPos;
+
+                public int size => text.Length;
+
+                public int endPos {
+                    get => startPos + size;
+                    set => startPos = value - size;
+                }
+
+                public NodeInfo parent, left, right;
+            }
+
+            public static void print(TreeNode<T> root, int topMargin = 2, int leftMargin = 2) {
+                if (root == null) return;
+                var rootTop = Console.CursorTop + topMargin;
+                var last = new List<NodeInfo>();
+                var next = root;
+                for (var level = 0; next != null; level++) {
+                    var item = new NodeInfo {node = next, text = next.key.ToString(" 0 ")};
+                    if (level < last.Count) {
+                        item.startPos = last[level].endPos + 1;
+                        last[level] = item;
+                    }
+                    else {
+                        item.startPos = leftMargin;
+                        last.Add(item);
+                    }
+
+                    if (level > 0) {
+                        item.parent = last[level - 1];
+                        if (next == item.parent.node.left) {
+                            item.parent.left = item;
+                            item.endPos = Math.Max(item.endPos, item.parent.startPos);
+                        }
+                        else {
+                            item.parent.right = item;
+                            item.startPos = Math.Max(item.startPos, item.parent.endPos);
+                        }
+                    }
+
+                    next = next.left ?? next.right;
+                    for (; next == null; item = item.parent) {
+                        print(item, rootTop + 2 * level);
+                        if (--level < 0) break;
+                        if (item == item.parent.left) {
+                            item.parent.startPos = item.endPos;
+                            next = item.parent.node.right;
+                        }
+                        else {
+                            if (item.parent.left == null)
+                                item.parent.endPos = item.startPos;
+                            else
+                                item.parent.startPos += (item.startPos - item.parent.endPos) / 2;
+                        }
+                    }
+                }
+
+                Console.SetCursorPosition(0, rootTop + 2 * last.Count - 1);
+            }
+
+            private static void print(NodeInfo item, int top) {
+                swapColors();
+                print(item.text, top, item.startPos);
+                swapColors();
+                if (item.left != null)
+                    printLink(top + 1, "┌", "┘", item.left.startPos + item.left.size / 2, item.startPos);
+                if (item.right != null)
+                    printLink(top + 1, "└", "┐", item.endPos - 1, item.right.startPos + item.right.size / 2);
+            }
+
+            private static void printLink(int top, string start, string end, int startPos, int endPos) {
+                print(start, top, startPos);
+                print("─", top, startPos + 1, endPos);
+                print(end, top, endPos);
+            }
+
+            private static void print(string s, int top, int left, int right = -1) {
+                Console.SetCursorPosition(left, top);
+                if (right < 0) right = left + s.Length;
+                while (Console.CursorLeft < right) Console.Write(s);
+            }
+
+            private static void swapColors() {
+                var color = Console.ForegroundColor;
+                Console.ForegroundColor = Console.BackgroundColor;
+                Console.BackgroundColor = color;
             }
         }
     }
