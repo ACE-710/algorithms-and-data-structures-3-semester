@@ -200,6 +200,26 @@ namespace BstConsole {
             size--;
         }
 
+        public int getTreeInternalWay() => getTreeInternalWay(head);
+
+        private static int getTreeInternalWay(TreeNode<T> node, int depth = 0) {
+            var leftDepth = 0;
+            var rightDepth = 0;
+
+            if (node.right != null) {
+                rightDepth = getTreeInternalWay(node.right, depth + 1);// depth == 0 ? 1 : depth + depth);
+            }
+
+            if (node.left != null) {
+                leftDepth = getTreeInternalWay(node.left, depth + 1);// depth == 0 ? 1 : depth + depth);
+            }
+
+            if (node.left != null || node.right != null)
+                return leftDepth + rightDepth + depth;
+            return depth;
+        }
+
+
         private int getTreeDepth(TreeNode<T> node = null, int depth = 0, Side side = Side.None) {
             if (node == null) {
                 return getTreeDepth(head);

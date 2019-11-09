@@ -15,12 +15,12 @@ namespace BstConsole {
             tree.insert(8, 55);
             tree.insert(32, 56);
             tree.insert(7, 57);
-            tree.insert(2, 58);
-            tree.insert(6, 59);
-            tree.insert(7, 512);
-            tree.insert(5, 511);
-            tree.insert(5, 513);
-            tree.insert(3, 515);
+            tree.insert(23, 58);
+            tree.insert(62, 59);
+            tree.insert(71, 512);
+            tree.insert(54, 511);
+            tree.insert(55, 513);
+            tree.insert(36, 515);
             tree.insert(2, 516);
             tree.insert(6, 517);
             tree.insert(7, 518);
@@ -33,7 +33,7 @@ namespace BstConsole {
             
             //tree.iterator.setValue(510);
             
-            Console.WriteLine(tree[6]);
+            Console.WriteLine(tree.getTreeInternalWay());
             Console.Read();
         }
     }
