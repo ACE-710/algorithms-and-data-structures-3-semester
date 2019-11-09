@@ -27,7 +27,7 @@ namespace BstConsole {
             return node.key == i ? node.value : getValueByKey(node.key > i ? node.left : node.right, i);
         }
 
-        public void delete(int key) {
+        public void remove(int key) {
             if (head.key == key) {
                 if (head.left == null && head.right == null) {
                     head = null;
