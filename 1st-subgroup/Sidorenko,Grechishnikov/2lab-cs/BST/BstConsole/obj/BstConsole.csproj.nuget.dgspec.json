@@ -1,24 +1,26 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\srggr\\Projects\\uni\\SAOD\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj": {}
+    "D:\\NSTU\\algorithms-and-data-structures-5-semester\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj": {}
   },
   "projects": {
-    "C:\\Users\\srggr\\Projects\\uni\\SAOD\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj": {
+    "D:\\NSTU\\algorithms-and-data-structures-5-semester\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\srggr\\Projects\\uni\\SAOD\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj",
+        "projectUniqueName": "D:\\NSTU\\algorithms-and-data-structures-5-semester\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj",
         "projectName": "BstConsole",
-        "projectPath": "C:\\Users\\srggr\\Projects\\uni\\SAOD\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj",
-        "packagesPath": "C:\\Users\\srggr\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\srggr\\Projects\\uni\\SAOD\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\obj\\",
+        "projectPath": "D:\\NSTU\\algorithms-and-data-structures-5-semester\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\BstConsole.csproj",
+        "packagesPath": "C:\\Users\\auror\\.nuget\\packages\\",
+        "outputPath": "D:\\NSTU\\algorithms-and-data-structures-5-semester\\1st-subgroup\\Sidorenko,Grechishnikov\\2lab-cs\\BST\\BstConsole\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
+          "C:\\Microsoft\\Xamarin\\NuGet",
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\srggr\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "C:\\Users\\auror\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Xamarin.Offline.config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp2.2"
@@ -49,7 +51,12 @@
             }
           },
           "imports": [
-            "net461"
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48"
           ],
           "assetTargetFallback": true,
           "warn": true

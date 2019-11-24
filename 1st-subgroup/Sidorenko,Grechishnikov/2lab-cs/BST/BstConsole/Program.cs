@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace BstConsole {
@@ -12,12 +13,18 @@ namespace BstConsole {
                               "3. Get\n" +
                               "4. remove\n" +
                               "5. Clear\n" +
-                              "6. Show list\n");
+                              "6. Show list\n" +
+                              "7. Test deg tree\n" +
+                              "8. Test random tree\n");
+            
         }
 
-        private static void processMenu(Bst<int> tree, int pos) {
-            switch (pos) {
-                case 1: {
+        private static void processMenu(Bst<int> tree, int pos)
+        {
+            switch (pos)
+            {
+                case 1:
+                {
                     Console.WriteLine("Enter key and value: ");
                     var input = Console.ReadLine().Split(" ").ToArray();
                     var position = Convert.ToInt32(input[0]);
@@ -25,26 +32,106 @@ namespace BstConsole {
                     tree.insert(position, elem);
                     break;
                 }
-                case 2: {
+                case 2:
+                {
                     Console.WriteLine(tree.isEmpty);
                     break;
                 }
-                case 3: {
+                case 3:
+                {
                     Console.WriteLine("Enter pos: ");
                     Console.WriteLine(tree[Convert.ToInt32(Console.ReadLine())]);
                     break;
                 }
-                case 4: {
+                case 4:
+                {
                     Console.WriteLine("Remove pos: ");
                     tree.remove(Convert.ToInt32(Console.ReadLine()));
                     break;
                 }
-                case 5: {
+                case 5:
+                {
                     tree.clear();
                     break;
                 }
-                case 6: {
+                case 6:
+                {
                     tree.printTree();
+                    break;
+                }
+                case 7:
+                {
+                    Random rand = new Random();
+                    int n = 1000;
+                    var testtree = new Bst<int>();
+                    List<int> m = new List<int>(n);
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        m.Add(rand.Next(n));
+                        testtree.insert(m[i], 1);
+                    }
+
+                    testtree.getCount();
+                    double I = 0;
+                    double D = 0;
+                    double S = 0;
+
+                    for (int i = 0; i < n / 2; i++)
+                    {
+                        int k = rand.Next(n);
+                        testtree.remove(k);
+                        D += testtree.getCount();
+                        testtree.insert(m[k], 1);
+                        I += testtree.getCount();
+                        testtree.getValueByKey(k);
+                        S += testtree.getCount();
+                    }
+
+                    Console.WriteLine(1.39 * Math.Log(n));
+                    Console.WriteLine("Вставка:");
+                    Console.WriteLine(I / (n / 2));
+                    Console.WriteLine("Удаление:");
+                    Console.WriteLine(D / (n / 2));
+                    Console.WriteLine("Поиск:");
+                    Console.WriteLine(S / (n / 2));
+                    break;
+                }
+                case 8:
+                {
+                    Random rand = new Random();
+                    int n = 1000;
+                    var testtree = new Bst<int>();
+                    List<int> m = new List<int>(n);
+
+                    for (int i = 0; i < n; i++)
+                    {
+                        m.Add(i);
+                        testtree.insert(m[i], 1);
+                    }
+                    testtree.getCount();
+                    double I = 0;
+                    double D = 0;
+                    double S = 0;
+
+                    for (int i = 0; i < n / 2; i++)
+                    {
+                        int k = rand.Next(n);
+                        testtree.getCount();
+                        testtree.remove(k);
+                        D += tree.getCount();
+                        tree.insert(m[k], 1);
+                        I += tree.getCount();
+                        testtree.getValueByKey(k);
+                        S += tree.getCount();
+                    }
+                    Console.WriteLine(1.39 * Math.Log(n));
+                    Console.WriteLine("Вставка:");
+                    Console.WriteLine(I / (n / 2));
+                    Console.WriteLine("Удаление:");
+                    Console.WriteLine(D / (n / 2));
+                    Console.WriteLine("Поиск:");
+                    Console.WriteLine(S / (n / 2));
                     break;
                 }
             }

@@ -8,6 +8,8 @@ using System.Numerics;
 namespace BstConsole {
     public class Bst<T> where T : IComparable {
         private TreeNode<T> head;
+        public int cnt { private set; get; }
+        private int a;
 
         public int size { private set; get; }
 
@@ -17,7 +19,9 @@ namespace BstConsole {
 
         public T this[int i] => getValueByKey(i);
 
-        private T getValueByKey(int i) {
+        public T getValueByKey(int i)
+        {
+            cnt++;
             if (head == null) throw new ApplicationException("Tree is empty");
             return head.key == i ? head.value : getValueByKey(head.key > i ? head.left : head.right, i);
         }
@@ -26,24 +30,35 @@ namespace BstConsole {
             if (node == null) throw new ApplicationException("No such key in tree");
             return node.key == i ? node.value : getValueByKey(node.key > i ? node.left : node.right, i);
         }
+        
+        public int getCount()//опрос числа узлов, просмотренных операцией
+        {
+            int temp = cnt;
+            cnt = 0;
+            return temp;
+        }
+
 
         public void remove(int key) {
             if (head.key == key) {
                 if (head.left == null && head.right == null) {
                     head = null;
                     size--;
+                    cnt++;
                     return;
                 }
 
                 if (head.left != null) {
                     head = head.left;
                     size--;
+                    cnt++;
                     return;
                 }
 
                 if (head.right != null) {
                     head = head.right;
                     size--;
+                    cnt++;
                     return;
                 }
             }
@@ -103,13 +118,17 @@ namespace BstConsole {
                 head = new TreeNode<T>(key, value);
                 iterator = new BstIterator(head);
                 size++;
+                cnt++;
             }
             else {
                 insert(head, key, value);
+                cnt++;
             }
         }
 
-        private void insert(TreeNode<T> node, int key, T value) {
+        private void insert(TreeNode<T> node, int key, T value)
+        {
+            a++;
             if (node.key > key) {
                 if (node.left == null) {
                     node.left = new TreeNode<T>(key, value);
