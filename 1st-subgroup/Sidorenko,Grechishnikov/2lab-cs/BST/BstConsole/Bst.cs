@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Numerics;
+using System.Threading.Tasks;
 
 // ReSharper disable TailRecursiveCall
 
-namespace BstConsole {
-    public class Bst<T> where T : IComparable {
+namespace BstConsole
+{
+    public class Bst<T> where T : IComparable
+    {
         private TreeNode<T> head;
         public int cnt { private set; get; }
         private int a;
@@ -26,12 +28,13 @@ namespace BstConsole {
             return head.key == i ? head.value : getValueByKey(head.key > i ? head.left : head.right, i);
         }
 
-        private static T getValueByKey(TreeNode<T> node, int i) {
+        private static T getValueByKey(TreeNode<T> node, int i)
+        {
             if (node == null) throw new ApplicationException("No such key in tree");
             return node.key == i ? node.value : getValueByKey(node.key > i ? node.left : node.right, i);
         }
-        
-        public int getCount()//опрос числа узлов, просмотренных операцией
+
+        public int getCount() //опрос числа узлов, просмотренных операцией
         {
             int temp = cnt;
             cnt = 0;
@@ -39,67 +42,177 @@ namespace BstConsole {
         }
 
 
-        public void remove(int key) {
-            if (head.key == key) {
-                if (head.left == null && head.right == null) {
+        public void remove(int key)
+        {
+            if (head.key == key)
+            {
+                if (head.left == null && head.right == null)
+                {
                     head = null;
                     size--;
                     cnt++;
                     return;
                 }
 
-                if (head.left != null) {
+                if ((head.left != null || head.right != null) && (head.left == null || head.right == null))
+                {
+                    if (head.left != null)
+                    {
+                        head = head.left;
+                        size--;
+                        cnt++;
+                        return;
+                    }
+
+                    if (head.right != null)
+                    {
+                        head = head.right;
+                        size--;
+                        cnt++;
+                        return;
+                    }
+                }
+
+                if (head.left.right == null && head.left.left != null)
+                {
+                    head.left.right = head.right;
                     head = head.left;
-                    size--;
-                    cnt++;
                     return;
                 }
 
-                if (head.right != null) {
-                    head = head.right;
-                    size--;
-                    cnt++;
-                    return;
+                var nodeWithBiggestKeyChild = findNodeWithBiggestKey(head, head.left);
+                if (nodeWithBiggestKeyChild.Equals(head))
+                {
+                    if (nodeWithBiggestKeyChild.left != null)
+                    {
+                        nodeWithBiggestKeyChild.key = nodeWithBiggestKeyChild.left.key;
+                        nodeWithBiggestKeyChild.left = null;
+                    }
+                    else
+                    {
+                        head = head.right;
+                    }
                 }
+                else
+                {
+                    head.key = nodeWithBiggestKeyChild.right?.key ?? nodeWithBiggestKeyChild.left.key;
+                    if (nodeWithBiggestKeyChild.right == null) nodeWithBiggestKeyChild.left = null;
+                    else nodeWithBiggestKeyChild.right = null;
+                }
+
+                return;
             }
 
-            if (head.left != null && head.right != null) {
+            if (head.left != null && head.right != null)
+            {
                 findAndDelete(head, head.key < key ? head.right : head.left, key,
                     head.key < key ? Side.Right : Side.Left);
             }
         }
 
-        private void findAndDelete(TreeNode<T> parent, TreeNode<T> it, int key, Side side) {
-            if (it.key == key) {
+        private void findAndDelete(TreeNode<T> parent, TreeNode<T> it, int key, Side side)
+        {
+            if (it == null) return;
+            if (it.key == key)
+            {
                 size--;
-                if (it.left == null && it.right == null) {
+                if (it.left == null && it.right == null)
+                {
                     if (side == Side.Left) parent.left = null;
                     else parent.right = null;
                     return;
                 }
 
-                if (it.left != null) {
+                if (it.left != null && it.left.left == null && it.left.right == null)
+                {
+                    it.left.right = it.right;
                     if (side == Side.Left) parent.left = it.left;
                     else parent.right = it.left;
                     return;
                 }
 
-                if (it.right != null) {
+                if (it.right != null && it.left == null)
+                {
                     if (side == Side.Left) parent.left = it.right;
                     else parent.right = it.right;
                     return;
                 }
 
-                var nodeWithBiggestKeyChild = findNodeWithBiggestKey(it, it.left);
-                var biggestKey = nodeWithBiggestKeyChild.right.key;
-                nodeWithBiggestKeyChild.right = null;
+                if (parent.left != null && parent.right != null)
+                {
+                    if (it.left == null && it.right == null)
+                    {
+                        if (side == Side.Left) parent.left = null;
+                        else parent.right = null;
+                    }
 
-                if (side == Side.Left) parent.left.key = biggestKey;
-                else parent.right.key = biggestKey;
+                    int biggestKey2;
+                    var nodeWithBiggestKeyChild2 = findNodeWithBiggestKey(it, it.left);
+                    if (nodeWithBiggestKeyChild2.key == it.key)
+                    {
+                        if (side == Side.Right)
+                        {
+                            parent.right.key = nodeWithBiggestKeyChild2.right?.key ?? nodeWithBiggestKeyChild2.left.key;
+                            biggestKey2 = nodeWithBiggestKeyChild2.right?.key ?? nodeWithBiggestKeyChild2.left.key;
+                            if (it.right != null) it.right = null;
+                            else it.left = null;
+                        }
+                        else
+                        {
+                            parent.left.key = nodeWithBiggestKeyChild2.right?.key ?? nodeWithBiggestKeyChild2.left.key;
+                            biggestKey2 = nodeWithBiggestKeyChild2.right?.key ?? nodeWithBiggestKeyChild2.left.key;
+                            if (it.right != null) it.right = null;
+                            else it.left = null;
+                        }
+
+                        return;
+                    }
+                    else
+                    {
+                        biggestKey2 = nodeWithBiggestKeyChild2.right?.key ?? nodeWithBiggestKeyChild2.left.key;
+                        if (nodeWithBiggestKeyChild2.right != null) nodeWithBiggestKeyChild2.right = null;
+                        else nodeWithBiggestKeyChild2.left = null;
+                    }
+
+                    if (side == Side.Left)
+                    {
+                        parent.left.key = biggestKey2;
+                        if (parent.left.right != null) parent.left.right = null;
+                        else parent.left.left = null;
+                    }
+                    else
+                    {
+                        parent.right.key = biggestKey2;
+                        if (parent.right.right != null) parent.right.right = null;
+                        else parent.right.left = null;
+                    }
+
+                    return;
+                }
+
+                var nodeWithBiggestKeyChild = findNodeWithBiggestKey(it, it.left);
+                var biggestKey = nodeWithBiggestKeyChild.right?.key ?? nodeWithBiggestKeyChild.left.key;
+                if (nodeWithBiggestKeyChild.right != null)
+                    nodeWithBiggestKeyChild.right = null;
+                else
+                    nodeWithBiggestKeyChild.left = null;
+
+                if (side == Side.Left)
+                {
+                    parent.left.key = biggestKey;
+                    parent.right = it.right;
+                }
+                else
+                {
+                    parent.right.key = biggestKey;
+                    parent.left = it.left;
+                }
+
+                return;
             }
 
-            findAndDelete(it, it.key > key ? it.right : it.left, key,
-                it.key > key ? Side.Right : Side.Left);
+            findAndDelete(it, it.key < key ? it.right : it.left, key,
+                it.key < key ? Side.Right : Side.Left);
         }
 
         /// <summary>
@@ -109,18 +222,33 @@ namespace BstConsole {
         /// <param name="parent">parent of  provided node</param>
         /// <param name="it">node that is "start point of searching"</param>
         /// <returns>node with biggest child</returns>
-        private static TreeNode<T> findNodeWithBiggestKey(TreeNode<T> parent, TreeNode<T> it) {
-            return it.right != null ? findNodeWithBiggestKey(it, it.right) : parent;
+        private TreeNode<T> findNodeWithBiggestKey(TreeNode<T> parent, TreeNode<T> it)
+        {
+            if (it.right == null && it.left == null) return parent;
+
+            if (it.right != null)
+            {
+                if (it.right == null && it.left == null) return parent;
+                return findNodeWithBiggestKey(it, it.right);
+            }
+
+            if (parent.Equals(head) &&
+                it.left == null && it.right == null) return parent;
+
+            return parent.key != head.key ? parent : findNodeWithBiggestKey(it, it.left);
         }
 
-        public void insert(int key, T value) {
-            if (head == null) {
+        public void insert(int key, T value)
+        {
+            if (head == null)
+            {
                 head = new TreeNode<T>(key, value);
                 iterator = new BstIterator(head);
                 size++;
                 cnt++;
             }
-            else {
+            else
+            {
                 insert(head, key, value);
                 cnt++;
             }
@@ -129,51 +257,63 @@ namespace BstConsole {
         private void insert(TreeNode<T> node, int key, T value)
         {
             a++;
-            if (node.key > key) {
-                if (node.left == null) {
+            if (node.key > key)
+            {
+                if (node.left == null)
+                {
                     node.left = new TreeNode<T>(key, value);
                     size++;
                 }
-                else {
+                else
+                {
                     insert(node.left, key, value);
                 }
             }
-            else if (node.key == key) {
+            else if (node.key == key)
+            {
                 node.value = value;
             }
-            else {
-                if (node.right == null) {
+            else
+            {
+                if (node.right == null)
+                {
                     node.right = new TreeNode<T>(key, value);
                     size++;
                 }
-                else {
+                else
+                {
                     insert(node.right, key, value);
                 }
             }
         }
 
-        public void traverseTree() {
+        public void traverseTree()
+        {
             traverseNode(head);
             Console.WriteLine();
         }
 
 
-        private static void traverseNode(TreeNode<T> node) {
+        private static void traverseNode(TreeNode<T> node)
+        {
             if (node.left != null) traverseNode(node.left);
             if (node.right != null) traverseNode(node.right);
             Console.Write(node.key + " ");
         }
 
-        public void printTree() {
+        public void printTree()
+        {
             BTreePrinter.print(head);
         }
 
-        public int getWayLength() {
+        public int getWayLength()
+        {
 //            throw new NotImplementedException();
             var done = new ArrayList();
             var node = head;
             var lenght = 0;
-            while (true) {
+            while (true)
+            {
                 if (node.left != null)
                     lenght++;
 
@@ -184,19 +324,23 @@ namespace BstConsole {
             return lenght;
         }
 
-        public void clear() {
+        public void clear()
+        {
             if (head == null) return;
-            if (head.left == null && head.right == null) {
+            if (head.left == null && head.right == null)
+            {
                 head = null;
                 return;
             }
 
-            if (head.left != null) {
+            if (head.left != null)
+            {
                 clear(head.left);
                 head.left = null;
             }
 
-            if (head.right != null) {
+            if (head.right != null)
+            {
                 clear(head.right);
                 head.right = null;
             }
@@ -205,13 +349,16 @@ namespace BstConsole {
             size--;
         }
 
-        private void clear(TreeNode<T> node) {
-            if (node.left != null) {
+        private void clear(TreeNode<T> node)
+        {
+            if (node.left != null)
+            {
                 clear(node.left);
                 node.left = null;
             }
 
-            if (node.right != null) {
+            if (node.right != null)
+            {
                 clear(node.right);
                 node.right = null;
             }
@@ -221,16 +368,19 @@ namespace BstConsole {
 
         public int getTreeInternalWay() => getTreeInternalWay(head);
 
-        private static int getTreeInternalWay(TreeNode<T> node, int depth = 0) {
+        private static int getTreeInternalWay(TreeNode<T> node, int depth = 0)
+        {
             var leftDepth = 0;
             var rightDepth = 0;
 
-            if (node.right != null) {
-                rightDepth = getTreeInternalWay(node.right, depth + 1);// depth == 0 ? 1 : depth + depth);
+            if (node.right != null)
+            {
+                rightDepth = getTreeInternalWay(node.right, depth + 1); // depth == 0 ? 1 : depth + depth);
             }
 
-            if (node.left != null) {
-                leftDepth = getTreeInternalWay(node.left, depth + 1);// depth == 0 ? 1 : depth + depth);
+            if (node.left != null)
+            {
+                leftDepth = getTreeInternalWay(node.left, depth + 1); // depth == 0 ? 1 : depth + depth);
             }
 
             if (node.left != null || node.right != null)
@@ -239,33 +389,41 @@ namespace BstConsole {
         }
 
 
-        private int getTreeDepth(TreeNode<T> node = null, int depth = 0, Side side = Side.None) {
-            if (node == null) {
+        private int getTreeDepth(TreeNode<T> node = null, int depth = 0, Side side = Side.None)
+        {
+            if (node == null)
+            {
                 return getTreeDepth(head);
             }
 
             var leftDepth = 0;
             var rightDepth = 0;
 
-            if (node.right != null) {
+            if (node.right != null)
+            {
                 rightDepth = getTreeDepth(node.right, depth + 1, Side.Right);
             }
 
-            if (node.left != null) {
+            if (node.left != null)
+            {
                 leftDepth = getTreeDepth(node.left, depth + 1, Side.Left);
             }
 
 
-            if (depth == 1 && side == Side.Right) {
-                for (var i = 0; i < depth; i++) {
+            if (depth == 1 && side == Side.Right)
+            {
+                for (var i = 0; i < depth; i++)
+                {
                     Console.Write("    ");
                 }
 
                 Console.WriteLine(node.key);
                 Console.WriteLine(head.key);
             }
-            else if (node.key != head.key) {
-                for (var i = 0; i < depth; i++) {
+            else if (node.key != head.key)
+            {
+                for (var i = 0; i < depth; i++)
+                {
                     Console.Write("    ");
                 }
 
@@ -277,27 +435,32 @@ namespace BstConsole {
             return depth;
         }
 
-        private enum Side {
+        private enum Side
+        {
             Left,
             Right,
             None
         }
 
-        public class BstIterator {
+        public class BstIterator
+        {
             private TreeNode<T> head;
             private TreeNode<T> cur;
             private TreeNode<T> parent;
 
-            public BstIterator(TreeNode<T> head) {
+            public BstIterator(TreeNode<T> head)
+            {
                 this.head = head;
                 cur = head ?? throw new Exception("Tree is empty or iterator was not initialized properly");
             }
 
-            public void placeOnMin() {
+            public void placeOnMin()
+            {
                 cur = head ?? throw new Exception("Tree is empty or iterator was not initialized properly");
 
                 if (cur.left == null) return;
-                while (cur.left != null) {
+                while (cur.left != null)
+                {
                     parent = cur;
                     cur = cur.left;
                 }
@@ -305,26 +468,32 @@ namespace BstConsole {
 
             public bool checkState() => cur != null;
 
-            public void placeOnMax() {
+            public void placeOnMax()
+            {
                 cur = head ?? throw new Exception("Tree is empty or iterator was not initialized properly");
 
                 if (cur.right == null) return;
-                while (cur.right != null) {
+                while (cur.right != null)
+                {
                     parent = cur;
                     cur = cur.right;
                 }
             }
 
-            public T getValue() {
-                if (cur == null) {
+            public T getValue()
+            {
+                if (cur == null)
+                {
                     throw new Exception("Tree is empty or iterator was not initialized properly");
                 }
 
                 return cur.value;
             }
 
-            public void placeLeft() {
-                if (cur.left == null) {
+            public void placeLeft()
+            {
+                if (cur.left == null)
+                {
                     if (parent.left == null || parent.left.key >= cur.key)
                         throw new Exception("No more elements");
                     if (parent.key < cur.key) cur = parent;
@@ -332,7 +501,8 @@ namespace BstConsole {
                 else cur = cur.left;
             }
 
-            public void placeRight() {
+            public void placeRight()
+            {
                 if (cur.right == null)
                     if (parent.right == null || parent.right.key == cur.key)
                         throw new Exception("No more elements");
@@ -340,8 +510,10 @@ namespace BstConsole {
                 else cur = cur.right;
             }
 
-            public void setValue(T value) {
-                if (cur == null) {
+            public void setValue(T value)
+            {
+                if (cur == null)
+                {
                     throw new Exception("Tree is empty or iterator was not initialized properly");
                 }
 
@@ -349,15 +521,18 @@ namespace BstConsole {
             }
         }
 
-        private static class BTreePrinter {
-            private class NodeInfo {
+        private static class BTreePrinter
+        {
+            private class NodeInfo
+            {
                 public TreeNode<T> node;
                 public string text;
                 public int startPos;
 
                 public int size => text.Length;
 
-                public int endPos {
+                public int endPos
+                {
                     get => startPos + size;
                     set => startPos = value - size;
                 }
@@ -365,43 +540,53 @@ namespace BstConsole {
                 public NodeInfo parent, left, right;
             }
 
-            public static void print(TreeNode<T> root, int topMargin = 2, int leftMargin = 2) {
+            public static void print(TreeNode<T> root, int topMargin = 2, int leftMargin = 2)
+            {
                 if (root == null) return;
                 var rootTop = Console.CursorTop + topMargin;
                 var last = new List<NodeInfo>();
                 var next = root;
-                for (var level = 0; next != null; level++) {
+                for (var level = 0; next != null; level++)
+                {
                     var item = new NodeInfo {node = next, text = next.key.ToString(" 0 ")};
-                    if (level < last.Count) {
+                    if (level < last.Count)
+                    {
                         item.startPos = last[level].endPos + 1;
                         last[level] = item;
                     }
-                    else {
+                    else
+                    {
                         item.startPos = leftMargin;
                         last.Add(item);
                     }
 
-                    if (level > 0) {
+                    if (level > 0)
+                    {
                         item.parent = last[level - 1];
-                        if (next == item.parent.node.left) {
+                        if (next == item.parent.node.left)
+                        {
                             item.parent.left = item;
                             item.endPos = Math.Max(item.endPos, item.parent.startPos);
                         }
-                        else {
+                        else
+                        {
                             item.parent.right = item;
                             item.startPos = Math.Max(item.startPos, item.parent.endPos);
                         }
                     }
 
                     next = next.left ?? next.right;
-                    for (; next == null; item = item.parent) {
+                    for (; next == null; item = item.parent)
+                    {
                         print(item, rootTop + 2 * level);
                         if (--level < 0) break;
-                        if (item == item.parent.left) {
+                        if (item == item.parent.left)
+                        {
                             item.parent.startPos = item.endPos;
                             next = item.parent.node.right;
                         }
-                        else {
+                        else
+                        {
                             if (item.parent.left == null)
                                 item.parent.endPos = item.startPos;
                             else
@@ -413,7 +598,8 @@ namespace BstConsole {
                 Console.SetCursorPosition(0, rootTop + 2 * last.Count - 1);
             }
 
-            private static void print(NodeInfo item, int top) {
+            private static void print(NodeInfo item, int top)
+            {
                 swapColors();
                 print(item.text, top, item.startPos);
                 swapColors();
@@ -423,19 +609,22 @@ namespace BstConsole {
                     printLink(top + 1, "└", "┐", item.endPos - 1, item.right.startPos + item.right.size / 2);
             }
 
-            private static void printLink(int top, string start, string end, int startPos, int endPos) {
+            private static void printLink(int top, string start, string end, int startPos, int endPos)
+            {
                 print(start, top, startPos);
                 print("─", top, startPos + 1, endPos);
                 print(end, top, endPos);
             }
 
-            private static void print(string s, int top, int left, int right = -1) {
+            private static void print(string s, int top, int left, int right = -1)
+            {
                 Console.SetCursorPosition(left, top);
                 if (right < 0) right = left + s.Length;
                 while (Console.CursorLeft < right) Console.Write(s);
             }
 
-            private static void swapColors() {
+            private static void swapColors()
+            {
                 var color = Console.ForegroundColor;
                 Console.ForegroundColor = Console.BackgroundColor;
                 Console.BackgroundColor = color;
@@ -443,13 +632,15 @@ namespace BstConsole {
         }
     }
 
-    public class TreeNode<T> where T : IComparable {
+    public class TreeNode<T> where T : IComparable
+    {
         public int key;
         public T value;
         public TreeNode<T> left;
         public TreeNode<T> right;
 
-        public TreeNode(int key, T value) {
+        public TreeNode(int key, T value)
+        {
             this.key = key;
             this.value = value;
         }

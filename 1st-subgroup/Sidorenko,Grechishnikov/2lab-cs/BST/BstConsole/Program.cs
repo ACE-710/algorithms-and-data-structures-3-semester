@@ -4,18 +4,19 @@ using System.Linq;
 
 namespace BstConsole {
     class Program {
-        // ReSharper disable once InconsistentNaming
-
+        // ReSharper disable once InconsistentNamin
         private static void showMenu() {
             Console.WriteLine("0. Exit()\n" +
                               "1. Insert element\n" +
                               "2. isEmpty\n" +
                               "3. Get\n" +
-                              "4. remove\n" +
+                              "4. Remove\n" +
                               "5. Clear\n" +
                               "6. Show list\n" +
-                              "7. Test deg tree\n" +
-                              "8. Test random tree\n");
+                              "7. Show list\n" +
+                              "8. Get way length\n" +
+                              "9. Test deg tree\n" +
+                              "10. Test random tree\n");
             
         }
 
@@ -59,32 +60,54 @@ namespace BstConsole {
                     tree.printTree();
                     break;
                 }
-                case 7:
+                case 7: {
+                    Console.WriteLine(tree.size);
+                    break;
+                }
+                case 8:
+                {
+                    Console.WriteLine(tree.getTreeInternalWay());
+                    break;
+                }
+                case 9:
                 {
                     Random rand = new Random();
                     int n = 1000;
                     var testtree = new Bst<int>();
                     List<int> m = new List<int>(n);
+                    List<int> items = new List<int>(n);
 
-                    for (int i = 0; i < n; i++)
+                    int it = 0;
+                    int trueListPos = 0;
+                    while (testtree.size <= n)
                     {
-                        m.Add(rand.Next(n));
-                        testtree.insert(m[i], 1);
+                        m.Add(rand.Next(n*1000));
+                        if (items.Contains(m[trueListPos]))
+                        {
+                            trueListPos++;
+                            continue;
+                        }
+
+                        items.Add(m[trueListPos++]);
+                        testtree.insert(items[it++], 1);
                     }
 
                     testtree.getCount();
                     double I = 0;
                     double D = 0;
                     double S = 0;
+                    
+                    Random rnd= new Random();
+                    int[] shuffledArray = items.ToArray();
+                    rnd.Shuffle(shuffledArray);
 
                     for (int i = 0; i < n / 2; i++)
                     {
-                        int k = rand.Next(n);
-                        testtree.remove(k);
+                        testtree.remove(shuffledArray[i]);
                         D += testtree.getCount();
-                        testtree.insert(m[k], 1);
+                        testtree.insert(shuffledArray[i], 1);
                         I += testtree.getCount();
-                        testtree.getValueByKey(k);
+                        testtree.getValueByKey(shuffledArray[i]);
                         S += testtree.getCount();
                     }
 
@@ -97,33 +120,45 @@ namespace BstConsole {
                     Console.WriteLine(S / (n / 2));
                     break;
                 }
-                case 8:
+                case 10:
                 {
                     Random rand = new Random();
                     int n = 1000;
                     var testtree = new Bst<int>();
                     List<int> m = new List<int>(n);
+                    List<int> items = new List<int>(n);
 
-                    for (int i = 0; i < n; i++)
+                    int it = 0;
+                    int trueListPos = 0;
+                    while (testtree.size <= n)
                     {
-                        m.Add(i);
-                        testtree.insert(m[i], 1);
+                        m.Add(rand.Next(n*1000));
+                        if (items.Contains(m[trueListPos]))
+                        {
+                            trueListPos++;
+                            continue;
+                        }
+
+                        items.Add(m[trueListPos++]);
+                        testtree.insert(items[it++], 1);
                     }
                     testtree.getCount();
                     double I = 0;
                     double D = 0;
                     double S = 0;
+                    
+                    Random rnd= new Random();
+                    int[] shuffledArray = items.ToArray();
+                    rnd.Shuffle(shuffledArray);
 
                     for (int i = 0; i < n / 2; i++)
                     {
-                        int k = rand.Next(n);
-                        testtree.getCount();
-                        testtree.remove(k);
-                        D += tree.getCount();
-                        tree.insert(m[k], 1);
-                        I += tree.getCount();
-                        testtree.getValueByKey(k);
-                        S += tree.getCount();
+                        testtree.remove(shuffledArray[i]);
+                        D += testtree.getCount();
+                        testtree.insert(shuffledArray[i], 1);
+                        I += testtree.getCount();
+                        testtree.getValueByKey(shuffledArray[i]);
+                        S += testtree.getCount();
                     }
                     Console.WriteLine(1.39 * Math.Log(n));
                     Console.WriteLine("Вставка:");
@@ -136,7 +171,6 @@ namespace BstConsole {
                 }
             }
         }
-
         static void Main() {
             var tree = new Bst<int>();
 
@@ -160,11 +194,10 @@ namespace BstConsole {
             tree.insert(5, 519);
             tree.insert(4, 519);
             
-            tree.printTree();
-
             var x = -1;
             while (x != 0)
             {
+                tree.printTree();
                 showMenu();
                 var inp = Console.ReadLine();
                 if (inp.Equals("help"))
