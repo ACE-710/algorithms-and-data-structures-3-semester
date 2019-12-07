@@ -109,6 +109,17 @@ namespace BstConsole
                     head.key < key ? Side.Right : Side.Left);
             }
         }
+        
+        public bool contains(int key) {
+            return contains(key, head);
+        }
+
+        private bool contains(int key, TreeNode<T> node) {
+            if (node == null) return false;
+            if (node.key == key) return true;
+            if (node.left == null || node.right == null) return false;
+            return contains(key, node.left) || contains(key, node.right);
+        }
 
         private void findAndDelete(TreeNode<T> parent, TreeNode<T> it, int key, Side side)
         {
